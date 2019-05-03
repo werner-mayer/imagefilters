@@ -21,6 +21,7 @@ namespace Filters
                 graphics.DrawImage(sourceImage, new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), GraphicsUnit.Pixel);
                 graphics.Flush();
             }            
+
             return bmpNew;
         }
         public static Bitmap makeGrayScale(Image image)
@@ -42,6 +43,8 @@ namespace Filters
                     newBitmap.SetPixel(i, j, newColor);
                 }
             }
+            newBitmap.Save(Guid.NewGuid() + "image.jpg", ImageFormat.Jpeg);
+
             return newBitmap;
         }
 
@@ -62,10 +65,13 @@ namespace Filters
                     newBitmap.SetPixel(i, j, Color.FromArgb(r, g, b));
                 }
             }
+
+            newBitmap.Save(Guid.NewGuid() + "image.jpg", ImageFormat.Jpeg);
+
             return newBitmap;
         }
 
-        public static Bitmap makeMedian(Image image, int matrixSize = 3)
+        public static Bitmap makeMedian(Image image, int matrixSize = 5)
         {
             Bitmap original = GetArgbCopy(image);
             BitmapData sourceData =
@@ -88,7 +94,7 @@ namespace Filters
             int calcOffset = 0;
             int byteOffset = 0;
 
-            List<int> neighbourPixels = new List<int>();
+            List<int> vizinhos = new List<int>();
             byte[] middlePixel;
 
             for (int offsetY = filterOffset; offsetY <
@@ -101,7 +107,7 @@ namespace Filters
                                  sourceData.Stride +
                                  offsetX * 4;
 
-                    neighbourPixels.Clear();
+                    vizinhos.Clear();
 
                     for (int filterY = -filterOffset;
                         filterY <= filterOffset; filterY++)
@@ -113,14 +119,14 @@ namespace Filters
                                          (filterX * 4) +
                                          (filterY * sourceData.Stride);
 
-                            neighbourPixels.Add(BitConverter.ToInt32(
+                            vizinhos.Add(BitConverter.ToInt32(
                                              pixelBuffer, calcOffset));
                         }
                     }
-                    neighbourPixels.Sort();
+                    vizinhos.Sort();
 
                     middlePixel = BitConverter.GetBytes(
-                                       neighbourPixels[filterOffset]);
+                                       vizinhos[filterOffset]);
 
                     resultBuffer[byteOffset] = middlePixel[0];
                     resultBuffer[byteOffset + 1] = middlePixel[1];
@@ -139,6 +145,10 @@ namespace Filters
 
             Marshal.Copy(resultBuffer, 0, resultData.Scan0,
                                        resultBuffer.Length);
+
+            
+            resultBitmap.Save(Guid.NewGuid() + "image.jpg", ImageFormat.Jpeg);
+
             return resultBitmap;
         }
 
@@ -169,29 +179,27 @@ namespace Filters
 
             original.UnlockBits(bmpData);
 
+            
+            original.Save(Guid.NewGuid() + "image.jpg", ImageFormat.Jpeg);
             return original;
         }
 
         public static Bitmap makeBlur(Image image, Int32 blurSize = 5)
         {               
             Bitmap original = GetArgbCopy(image);
-            Bitmap newBitmap = new Bitmap(original.Width, original.Height);
-            Rectangle rectangle = new Rectangle(0, 0, image.Width, image.Height);
-            // make an exact copy of the bitmap provided
-            using (Graphics graphics = Graphics.FromImage(newBitmap))
+            Bitmap newImage = new Bitmap(original.Width, original.Height);
+            Rectangle ratangulo = new Rectangle(0, 0, image.Width, image.Height);
+            using (Graphics graphics = Graphics.FromImage(newImage))
                 graphics.DrawImage(image, new Rectangle(0, 0, image.Width, image.Height),
                     new Rectangle(0, 0, image.Width, image.Height), GraphicsUnit.Pixel);
 
-            // look at every pixel in the blur rectangle
-            for (int xx = rectangle.X; xx < rectangle.X + rectangle.Width; xx++)
+            for (int xx = ratangulo.X; xx < ratangulo.X + ratangulo.Width; xx++)
             {
-                for (int yy = rectangle.Y; yy < rectangle.Y + rectangle.Height; yy++)
+                for (int yy = ratangulo.Y; yy < ratangulo.Y + ratangulo.Height; yy++)
                 {
                     int avgR = 0, avgG = 0, avgB = 0;
                     int blurPixelCount = 0;
-
-                    // average the color of the red, green and blue for each pixel in the
-                    // blur size while making sure you don't go outside the image bounds
+                    
                     for (int x = xx; (x < xx + blurSize && x < image.Width); x++)
                     {
                         for (int y = yy; (y < yy + blurSize && y < image.Height); y++)
@@ -210,13 +218,14 @@ namespace Filters
                     avgG = avgG / blurPixelCount;
                     avgB = avgB / blurPixelCount;
 
-                    // now that we know the average for the blur size, set each pixel to that color
-                    for (int x = xx; x < xx + blurSize && x < image.Width && x < rectangle.Width; x++)
-                        for (int y = yy; y < yy + blurSize && y < image.Height && y < rectangle.Height; y++)
-                            newBitmap.SetPixel(x, y, Color.FromArgb(avgR, avgG, avgB));
+                    for (int x = xx; x < xx + blurSize && x < image.Width && x < ratangulo.Width; x++)
+                        for (int y = yy; y < yy + blurSize && y < image.Height && y < ratangulo.Height; y++)
+                            newImage.SetPixel(x, y, Color.FromArgb(avgR, avgG, avgB));
                 }
             }
-            return newBitmap;
+            newImage.Save(Guid.NewGuid() + "image.jpg", ImageFormat.Jpeg);
+
+            return newImage;
         }
 
         public static Bitmap makeTransparency(Image image, byte alphaComponent = 150)
@@ -239,6 +248,8 @@ namespace Filters
             Marshal.Copy(byteBuffer, 0, ptr, byteBuffer.Length);
 
             bmpNew.UnlockBits(bmpData);
+
+           bmpNew.Save(Guid.NewGuid() + "image.jpg", ImageFormat.Jpeg);
 
             return bmpNew;
         }
