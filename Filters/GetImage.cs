@@ -11,6 +11,18 @@ namespace Filters
 {
     public class GetImage
     {
+
+        private static Bitmap GetArgbCopy(Image sourceImage)
+        {
+            Bitmap bmpNew = new Bitmap(sourceImage.Width, sourceImage.Height, PixelFormat.Format32bppArgb);
+
+            using (Graphics graphics = Graphics.FromImage(bmpNew))
+            {
+                graphics.DrawImage(sourceImage, new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), GraphicsUnit.Pixel);
+                graphics.Flush();
+            }            
+            return bmpNew;
+        }
         public static Bitmap makeGrayScale(Image image)
         {
             Bitmap original = GetArgbCopy(image);
@@ -20,17 +32,13 @@ namespace Filters
             {
                 for (int j = 0; j < original.Height; j++)
                 {
-                    //get the pixel from the original image
                     Color originalColor = original.GetPixel(i, j);
 
-                    //create the grayscale version of the pixel
                     int grayScale = (int)((originalColor.R * .3) + (originalColor.G * .59)
                         + (originalColor.B * .11));
 
-                    //create the color object
                     Color newColor = Color.FromArgb(grayScale, grayScale, grayScale);
 
-                    //set the new image's pixel to the grayscale version
                     newBitmap.SetPixel(i, j, newColor);
                 }
             }
@@ -57,60 +65,31 @@ namespace Filters
             return newBitmap;
         }
 
-        public static Bitmap makeNoise(Image image)
+        public static Bitmap makeMedian(Image image, int matrixSize = 3)
         {
             Bitmap original = GetArgbCopy(image);
-            Bitmap newBitmap = new Bitmap(original.Width, original.Height);
-
-            for (int i = 0; i < original.Width; i++)
-            {
-                for (int j = 0; j < original.Height; j++)
-                {
-                    Color pixel = original.GetPixel(i, j);
-
-                    int r = 255 - pixel.R;
-                    int g = 255 - pixel.G;
-                    int b = 255 - pixel.B;
-                    newBitmap.SetPixel(i, j, Color.FromArgb(r, g, b));
-                }
-            }
-            return newBitmap;
-        }
-
-        public static Bitmap makeMedian(Image image, int matrixSize = 5, int bias = 2)
-        {
-            Bitmap original = GetArgbCopy(image);
-
             BitmapData sourceData =
                        original.LockBits(new Rectangle(0, 0,
                        original.Width, original.Height),
                        ImageLockMode.ReadOnly,
                        PixelFormat.Format32bppArgb);
 
-
             byte[] pixelBuffer = new byte[sourceData.Stride *
-                                          sourceData.Height];
-
+                                          sourceData.Height];            
 
             byte[] resultBuffer = new byte[sourceData.Stride *
                                            sourceData.Height];
 
-
             Marshal.Copy(sourceData.Scan0, pixelBuffer, 0,
                                        pixelBuffer.Length);
 
-
             original.UnlockBits(sourceData);
-
             int filterOffset = (matrixSize - 1) / 2;
             int calcOffset = 0;
-
-
             int byteOffset = 0;
 
             List<int> neighbourPixels = new List<int>();
             byte[] middlePixel;
-
 
             for (int offsetY = filterOffset; offsetY <
                 original.Height - filterOffset; offsetY++)
@@ -122,9 +101,7 @@ namespace Filters
                                  sourceData.Stride +
                                  offsetX * 4;
 
-
                     neighbourPixels.Clear();
-
 
                     for (int filterY = -filterOffset;
                         filterY <= filterOffset; filterY++)
@@ -132,24 +109,18 @@ namespace Filters
                         for (int filterX = -filterOffset;
                             filterX <= filterOffset; filterX++)
                         {
-
-
                             calcOffset = byteOffset +
                                          (filterX * 4) +
-                                (filterY * sourceData.Stride);
-
+                                         (filterY * sourceData.Stride);
 
                             neighbourPixels.Add(BitConverter.ToInt32(
                                              pixelBuffer, calcOffset));
                         }
                     }
-
-
                     neighbourPixels.Sort();
 
                     middlePixel = BitConverter.GetBytes(
                                        neighbourPixels[filterOffset]);
-
 
                     resultBuffer[byteOffset] = middlePixel[0];
                     resultBuffer[byteOffset + 1] = middlePixel[1];
@@ -157,11 +128,8 @@ namespace Filters
                     resultBuffer[byteOffset + 3] = middlePixel[3];
                 }
             }
-
-
             Bitmap resultBitmap = new Bitmap(original.Width,
                                              original.Height);
-
 
             BitmapData resultData =
                        resultBitmap.LockBits(new Rectangle(0, 0,
@@ -169,68 +137,39 @@ namespace Filters
                        ImageLockMode.WriteOnly,
                        PixelFormat.Format32bppArgb);
 
-
             Marshal.Copy(resultBuffer, 0, resultData.Scan0,
                                        resultBuffer.Length);
-
             return resultBitmap;
-        }
-
-        private static Bitmap GetArgbCopy(Image sourceImage)
-        {
-            Bitmap bmpNew = new Bitmap(sourceImage.Width, sourceImage.Height, PixelFormat.Format32bppArgb);
-
-
-            using (Graphics graphics = Graphics.FromImage(bmpNew))
-            {
-                graphics.DrawImage(sourceImage, new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), new Rectangle(0, 0, bmpNew.Width, bmpNew.Height), GraphicsUnit.Pixel);
-                graphics.Flush();
-            }
-
-
-            return bmpNew;
-        }
-
-
-        private static Bitmap ApplyColorMatrix(Image sourceImage, ColorMatrix colorMatrix)
-        {
-            Bitmap bmp32BppSource = GetArgbCopy(sourceImage);
-            Bitmap bmp32BppDest = new Bitmap(bmp32BppSource.Width, bmp32BppSource.Height, PixelFormat.Format32bppArgb);
-
-
-            using (Graphics graphics = Graphics.FromImage(bmp32BppDest))
-            {
-                ImageAttributes bmpAttributes = new ImageAttributes();
-                bmpAttributes.SetColorMatrix(colorMatrix);
-
-                graphics.DrawImage(bmp32BppSource, new Rectangle(0, 0, bmp32BppSource.Width, bmp32BppSource.Height),
-                                    0, 0, bmp32BppSource.Width, bmp32BppSource.Height, GraphicsUnit.Pixel, bmpAttributes);
-
-
-            }
-
-
-            bmp32BppSource.Dispose();
-
-
-            return bmp32BppDest;
         }
 
         public static Bitmap makeSepiaTone(Image image)
         {
             Bitmap original = GetArgbCopy(image);
-            ColorMatrix colorMatrix = new ColorMatrix(new float[][]
-                            {
-                        new float[]{.393f, .349f, .272f, 0, 0},
-                        new float[]{.769f, .686f, .534f, 0, 0},
-                        new float[]{.189f, .168f, .131f, 0, 0},
-                        new float[]{0, 0, 0, 1, 0},
-                        new float[]{0, 0, 0, 0, 1}
-                            });
+            BitmapData bmpData = original.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
-            var resultBitmap = ApplyColorMatrix(original, colorMatrix);
+            IntPtr ptr = bmpData.Scan0;
 
-            return resultBitmap;
+            byte[] byteBuffer = new byte[bmpData.Stride * original.Height];
+
+            Marshal.Copy(ptr, byteBuffer, 0, byteBuffer.Length);
+
+            byte maxValue = 255;
+
+            for (int k = 0; k < byteBuffer.Length; k += 4)
+            {
+                var r = byteBuffer[k] * 0.189f + byteBuffer[k + 1] * 0.769f + byteBuffer[k + 2] * 0.393f;
+                var g = byteBuffer[k] * 0.168f + byteBuffer[k + 1] * 0.686f + byteBuffer[k + 2] * 0.349f;
+                var b = byteBuffer[k] * 0.131f + byteBuffer[k + 1] * 0.534f + byteBuffer[k + 2] * 0.272f;
+
+                byteBuffer[k + 2] = (r > maxValue ? maxValue : (byte)r);
+                byteBuffer[k + 1] = (g > maxValue ? maxValue : (byte)g);
+                byteBuffer[k] = (b > maxValue ? maxValue : (byte)b);
+            }
+            Marshal.Copy(byteBuffer, 0, ptr, byteBuffer.Length);
+
+            original.UnlockBits(bmpData);
+
+            return original;
         }
 
         public static Bitmap makeBlur(Image image, Int32 blurSize = 5)
@@ -257,7 +196,7 @@ namespace Filters
                     {
                         for (int y = yy; (y < yy + blurSize && y < image.Height); y++)
                         {
-                            Color pixel = newBitmap.GetPixel(x, y);
+                            Color pixel = original.GetPixel(x, y);
 
                             avgR += pixel.R;
                             avgG += pixel.G;
@@ -277,27 +216,31 @@ namespace Filters
                             newBitmap.SetPixel(x, y, Color.FromArgb(avgR, avgG, avgB));
                 }
             }
-
             return newBitmap;
         }
 
-
-        public static Bitmap makeTransparency(Image image)
+        public static Bitmap makeTransparency(Image image, byte alphaComponent = 150)
         {
-            Bitmap original = GetArgbCopy(image);
+            Bitmap bmpNew = GetArgbCopy(image);
+            BitmapData bmpData = bmpNew.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
 
-            ColorMatrix colorMatrix = new ColorMatrix(new float[][]
-                        {
-                            new float[]{1, 0, 0, 0, 0},
-                            new float[]{0, 1, 0, 0, 0},
-                            new float[]{0, 0, 1, 0, 0},
-                            new float[]{0, 0, 0, 0.3f, 0},
-                            new float[]{0, 0, 0, 0, 1}
-                        });
+            IntPtr ptr = bmpData.Scan0;
 
-            var resultBitmap = ApplyColorMatrix(original, colorMatrix);
+            byte[] byteBuffer = new byte[bmpData.Stride * bmpNew.Height];
 
-            return resultBitmap;
+            Marshal.Copy(ptr, byteBuffer, 0, byteBuffer.Length);
+
+
+            for (int k = 3; k < byteBuffer.Length; k += 4)
+            {
+                byteBuffer[k] = alphaComponent;
+            }
+
+            Marshal.Copy(byteBuffer, 0, ptr, byteBuffer.Length);
+
+            bmpNew.UnlockBits(bmpData);
+
+            return bmpNew;
         }
 
     }

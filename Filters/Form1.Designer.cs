@@ -43,10 +43,9 @@
             // 
             // btnImage
             // 
-            this.btnImage.Location = new System.Drawing.Point(13, 800);
-            this.btnImage.Margin = new System.Windows.Forms.Padding(4);
+            this.btnImage.Location = new System.Drawing.Point(10, 650);
             this.btnImage.Name = "btnImage";
-            this.btnImage.Size = new System.Drawing.Size(100, 28);
+            this.btnImage.Size = new System.Drawing.Size(75, 23);
             this.btnImage.TabIndex = 1;
             this.btnImage.Text = "Carregar Imagem";
             this.btnImage.UseVisualStyleBackColor = true;
@@ -55,10 +54,9 @@
             // blurRadioButton
             // 
             this.blurRadioButton.AutoSize = true;
-            this.blurRadioButton.Location = new System.Drawing.Point(165, 782);
-            this.blurRadioButton.Margin = new System.Windows.Forms.Padding(4);
+            this.blurRadioButton.Location = new System.Drawing.Point(124, 635);
             this.blurRadioButton.Name = "blurRadioButton";
-            this.blurRadioButton.Size = new System.Drawing.Size(54, 21);
+            this.blurRadioButton.Size = new System.Drawing.Size(43, 17);
             this.blurRadioButton.TabIndex = 4;
             this.blurRadioButton.TabStop = true;
             this.blurRadioButton.Text = "Blur";
@@ -68,10 +66,9 @@
             // grayscaleRadioButton
             // 
             this.grayscaleRadioButton.AutoSize = true;
-            this.grayscaleRadioButton.Location = new System.Drawing.Point(165, 810);
-            this.grayscaleRadioButton.Margin = new System.Windows.Forms.Padding(4);
+            this.grayscaleRadioButton.Location = new System.Drawing.Point(124, 658);
             this.grayscaleRadioButton.Name = "grayscaleRadioButton";
-            this.grayscaleRadioButton.Size = new System.Drawing.Size(93, 21);
+            this.grayscaleRadioButton.Size = new System.Drawing.Size(72, 17);
             this.grayscaleRadioButton.TabIndex = 5;
             this.grayscaleRadioButton.TabStop = true;
             this.grayscaleRadioButton.Text = "Grayscale";
@@ -81,10 +78,9 @@
             // negativeRadioButton
             // 
             this.negativeRadioButton.AutoSize = true;
-            this.negativeRadioButton.Location = new System.Drawing.Point(313, 782);
-            this.negativeRadioButton.Margin = new System.Windows.Forms.Padding(4);
+            this.negativeRadioButton.Location = new System.Drawing.Point(235, 635);
             this.negativeRadioButton.Name = "negativeRadioButton";
-            this.negativeRadioButton.Size = new System.Drawing.Size(85, 21);
+            this.negativeRadioButton.Size = new System.Drawing.Size(68, 17);
             this.negativeRadioButton.TabIndex = 6;
             this.negativeRadioButton.TabStop = true;
             this.negativeRadioButton.Text = "Negative";
@@ -94,10 +90,9 @@
             // sepiaRadioButton
             // 
             this.sepiaRadioButton.AutoSize = true;
-            this.sepiaRadioButton.Location = new System.Drawing.Point(313, 810);
-            this.sepiaRadioButton.Margin = new System.Windows.Forms.Padding(4);
+            this.sepiaRadioButton.Location = new System.Drawing.Point(235, 658);
             this.sepiaRadioButton.Name = "sepiaRadioButton";
-            this.sepiaRadioButton.Size = new System.Drawing.Size(65, 21);
+            this.sepiaRadioButton.Size = new System.Drawing.Size(52, 17);
             this.sepiaRadioButton.TabIndex = 7;
             this.sepiaRadioButton.TabStop = true;
             this.sepiaRadioButton.Text = "Sepia";
@@ -107,10 +102,9 @@
             // mediaRadioButton
             // 
             this.mediaRadioButton.AutoSize = true;
-            this.mediaRadioButton.Location = new System.Drawing.Point(457, 782);
-            this.mediaRadioButton.Margin = new System.Windows.Forms.Padding(4);
+            this.mediaRadioButton.Location = new System.Drawing.Point(343, 635);
             this.mediaRadioButton.Name = "mediaRadioButton";
-            this.mediaRadioButton.Size = new System.Drawing.Size(67, 21);
+            this.mediaRadioButton.Size = new System.Drawing.Size(54, 17);
             this.mediaRadioButton.TabIndex = 8;
             this.mediaRadioButton.TabStop = true;
             this.mediaRadioButton.Text = "Media";
@@ -120,10 +114,9 @@
             // transparencyRadioButton
             // 
             this.transparencyRadioButton.AutoSize = true;
-            this.transparencyRadioButton.Location = new System.Drawing.Point(457, 810);
-            this.transparencyRadioButton.Margin = new System.Windows.Forms.Padding(4);
+            this.transparencyRadioButton.Location = new System.Drawing.Point(343, 658);
             this.transparencyRadioButton.Name = "transparencyRadioButton";
-            this.transparencyRadioButton.Size = new System.Drawing.Size(117, 21);
+            this.transparencyRadioButton.Size = new System.Drawing.Size(90, 17);
             this.transparencyRadioButton.TabIndex = 9;
             this.transparencyRadioButton.TabStop = true;
             this.transparencyRadioButton.Text = "Transparency";
@@ -132,28 +125,26 @@
             // 
             // panelSource
             // 
-            this.panelSource.Location = new System.Drawing.Point(16, 28);
-            this.panelSource.Margin = new System.Windows.Forms.Padding(4);
+            this.panelSource.Location = new System.Drawing.Point(12, 23);
             this.panelSource.Name = "panelSource";
-            this.panelSource.Size = new System.Drawing.Size(666, 727);
+            this.panelSource.Size = new System.Drawing.Size(500, 591);
             this.panelSource.TabIndex = 10;
             this.panelSource.TabStop = false;
             // 
             // panelOutput
             // 
-            this.panelOutput.Location = new System.Drawing.Point(749, 28);
-            this.panelOutput.Margin = new System.Windows.Forms.Padding(4);
+            this.panelOutput.Location = new System.Drawing.Point(562, 23);
             this.panelOutput.Name = "panelOutput";
-            this.panelOutput.Size = new System.Drawing.Size(666, 727);
+            this.panelOutput.Size = new System.Drawing.Size(500, 591);
             this.panelOutput.TabIndex = 11;
             this.panelOutput.TabStop = false;
             this.panelOutput.Click += new System.EventHandler(this.panelOutput_Click);
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1505, 973);
+            this.ClientSize = new System.Drawing.Size(1125, 696);
             this.Controls.Add(this.panelOutput);
             this.Controls.Add(this.panelSource);
             this.Controls.Add(this.transparencyRadioButton);
@@ -163,7 +154,6 @@
             this.Controls.Add(this.grayscaleRadioButton);
             this.Controls.Add(this.blurRadioButton);
             this.Controls.Add(this.btnImage);
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "Form1";
             this.Text = "Form1";
             this.Load += new System.EventHandler(this.Form1_Load);
